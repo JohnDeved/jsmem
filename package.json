@@ -1,0 +1,20 @@
+{
+  "name": "jsmem",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "rebuild": "cd .\\node_modules\\memoryjs && npm run install",
+    "build32": "cd .\\node_modules\\memoryjs && npm run build32",
+    "build64": "cd .\\node_modules\\memoryjs && npm run build64"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "memoryjs": "^3.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^11.12.2"
+  }
+}
