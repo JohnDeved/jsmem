@@ -47,7 +47,10 @@ interface IdataTypeProxy {
   vector3: { x: number, y: number, z: number }
   vec4: { w: number, x: number, y: number, z: number }
   vector4: { w: number, x: number, y: number, z: number }
+  buffer: Buffer[]
 }
+
+const dataTypes: IdataType[] = ['int', 'int32', 'uint32', 'int64', 'uint64', 'dword', 'short', 'long', 'float', 'double', 'bool', 'boolean', 'ptr', 'pointer', 'str', 'string', 'vec3', 'vector3', 'vec4', 'vector4', 'buffer']
 
 enum asm32 {
   nop = 0x00
@@ -94,21 +97,21 @@ class Memory {
 class MemoryProxy {
   constructor (private handle: number) {}
 
-  public get (t, p) {
-    const adress = parseInt(p)
+  public get (target, prop) {
+    const adress = parseInt(prop)
     if (isNaN(adress)) return
 
     const memory = new Memory(this.handle, adress)
 
-    return new Proxy({}, {
-      get: (t, p) => {
-        return memory.read(p as IdataType)
-      },
-      set: (t, p, v) => {
-        memory.write(v, p as IdataType)
-        return true
-      }
+    const handler = {}
+    dataTypes.forEach(type => {
+      Object.defineProperty(handler, type, {
+          get: () => memory.read(type),
+          set: val => memory.write(val, type),
+      })
     })
+
+    return handler as IdataTypeProxy
   }
 }
 
