@@ -9,9 +9,9 @@ interface Iprocess {
 }
 
 interface IopenProcess extends Iprocess {
-  dwSize: 304
-  handle: 632
-  modBaseAddr: 0
+  dwSize: number
+  handle: number
+  modBaseAddr: number
 }
 
 interface Imodule {
@@ -24,27 +24,7 @@ interface Imodule {
   th32ModuleID: number
 }
 
-type IdataType = 
-  | 'int'
-  | 'int32'
-  | 'uint32'
-  | 'int64'
-  | 'uint64'
-  | 'dword'
-  | 'short'
-  | 'long'
-  | 'float'
-  | 'double'
-  | 'bool'
-  | 'boolean'
-  | 'ptr'
-  | 'pointer'
-  | 'str'
-  | 'string'
-  | 'vec3'
-  | 'vector3'
-  | 'vec4'
-  | 'vector4'
+type IdataType = keyof IdataTypeProxy
 
 interface IdataTypeProxy {
   int: number
@@ -70,7 +50,11 @@ interface IdataTypeProxy {
 }
 
 enum asm32 {
+  nop = 0x00
+}
 
+enum asm64 {
+  nop = 0x90
 }
 
 class Memoryjs {
@@ -173,15 +157,15 @@ export class JsMem {
 
   public getProcess (): Iprocess[];
   public getProcess (processId?: number): Iprocess;
-  public getProcess (processName?: string): Iprocess;  
+  public getProcess (processName?: string): Iprocess;
   public getProcess (processId?: number | string) {
     switch (true) {
       case !processId:
         return Memoryjs.processes
-      
+
       case typeof processId === typeof 0:
         return Memoryjs.processes.find(process => process.th32ProcessID === processId)
-      
+
       case typeof processId === typeof '':
         return Memoryjs.processes.find(process => process.szExeFile === processId)
     }
