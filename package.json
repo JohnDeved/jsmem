@@ -2,19 +2,19 @@
   "name": "jsmem",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/jsmem/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node dist/test",
     "rebuild": "cd .\\node_modules\\memoryjs && npm run install",
     "build32": "cd .\\node_modules\\memoryjs && npm run build32",
     "build64": "cd .\\node_modules\\memoryjs && npm run build64"
   },
-  "author": "",
+  "author": "Johann Berger",
   "license": "ISC",
   "dependencies": {
     "memoryjs": "^3.2.3"
   },
   "devDependencies": {
-    "@types/node": "^11.12.2"
+    "@types/node": "^11.13.0"
   }
 }
