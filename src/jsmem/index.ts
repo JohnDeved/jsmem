@@ -52,14 +52,6 @@ interface IdataTypeProxy {
 
 const dataTypes: IdataType[] = ['int', 'int32', 'uint32', 'int64', 'uint64', 'dword', 'short', 'long', 'float', 'double', 'bool', 'boolean', 'ptr', 'pointer', 'str', 'string', 'vec3', 'vector3', 'vec4', 'vector4', 'buffer']
 
-enum asm32 {
-  nop = 0x00
-}
-
-enum asm64 {
-  nop = 0x90
-}
-
 class Memoryjs {
   public static get processes (): Iprocess[] {
     return mjs.getProcesses()
@@ -168,7 +160,18 @@ class Process {
   }
 }
 
+enum ASM32 {
+  nop = 0x00
+}
+
+enum ASM64 {
+  nop = 0x90
+}
+
 export class JsMem {
+  public asm32 = ASM32
+  public asm64 = ASM64
+
   public process (process: Iprocess) {
     return new Process(process)
   }
