@@ -92,26 +92,53 @@ class Memory {
   public write (value, dataType: IdataType) {
     return Memoryjs.writeMemory(this.handle, this.adress, value, dataType)
   }
+
+  public getBuffer (size: number): Buffer {
+    return mjs.readBuffer(this.handle, this.adress, size)
+  }
+
+  public setBuffer (buffer: Buffer) {
+    return mjs.writeBuffer(this.handle, this.adress, buffer);
+  }
 }
 
 class MemoryProxy {
   constructor (private handle: number) {}
 
   public get (target, prop) {
-    const adress = parseInt(prop)
+    const adress = Number(prop)
     if (isNaN(adress)) return
 
     const memory = new Memory(this.handle, adress)
 
-    const handler = {}
+    const proxyProps: {
+      IdataType?: {
+        set: (val: number) => void,
+        get: () => any}
+    } = {}
+
     dataTypes.forEach(type => {
-      Object.defineProperty(handler, type, {
-          get: () => memory.read(type),
-          set: val => memory.write(val, type),
-      })
+      switch (type) {
+        case 'buffer':
+          proxyProps[type] = {
+              get: () => new Proxy({}, {
+                get: (target, prop) => memory.getBuffer(Number(prop)),
+                set: (target, prop, value) => memory.setBuffer(value)
+              }),
+              set: value => memory.setBuffer(value)
+          }
+          break;
+
+        default:
+          proxyProps[type] = {
+              get: () => memory.read(type),
+              set: val => memory.write(val, type),
+          }
+          break
+      }
     })
 
-    return handler as IdataTypeProxy
+    return Object.defineProperties({}, proxyProps);
   }
 }
 
@@ -132,14 +159,6 @@ class Process {
 
   public get memory (): {[key: number]: IdataTypeProxy} {
     return new Proxy({}, new MemoryProxy(this.openProcess.handle))
-  }
-
-  public getBuffer (adress: number, size: number): Buffer {
-    return mjs.readBuffer(this.openProcess.handle, adress, size)
-  }
-
-  public setBuffer (adress: number, buffer: Buffer) {
-    return mjs.writeBuffer(this.openProcess.handle, adress, buffer);
   }
 
   public deepPointer (...offsets: number[]) {
