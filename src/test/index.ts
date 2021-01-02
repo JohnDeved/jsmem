@@ -30,8 +30,8 @@ const baseAddr = game2.openProcess.modBaseAddr
 const moneyAddr = game2.deepPointer(baseAddr + 0x002F0DD8, 0x24) + 0x8
 const healthAddr = game2.deepPointer(baseAddr + 0x00313B88, 0x38, 0x138, 0x62C) + 0x8
 
-let money = game2.memory[moneyAddr].double
-let health = game2.memory[healthAddr].double
+let money = game2.memory[moneyAddr]
+let health = game2.memory[healthAddr]
 
-money = money * 2 // dublicate money!
-health = 0 // kill the enemy!
+money.double = money.double * 2 // dublicate money!
+health.double = 0 // kill the enemy!
